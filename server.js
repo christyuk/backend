@@ -25,9 +25,9 @@ app.get("/weather", async (req, res) => {
 
     const apiURL = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${process.env.OPENWEATHER_API_KEY}&units=metric`;
 
-    const response = await axios.get(apiURL);
+const response = await axios.get(apiURL);
+res.json(response.data);
 
-    res.json(response.data);
   } catch (err) {
     console.error("Backend error:", err.message);
     return res.status(500).json({ error: "City not found or server error" });
