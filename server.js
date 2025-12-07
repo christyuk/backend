@@ -9,12 +9,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Health check for Render
+// HEALTH CHECK
 app.get("/healthz", (req, res) => {
   res.send("OK");
 });
 
-// Weather API route
+// WEATHER ROUTE
 app.get("/weather", async (req, res) => {
   try {
     const city = req.query.city;
@@ -23,14 +23,15 @@ app.get("/weather", async (req, res) => {
       return res.status(400).json({ error: "City is required" });
     }
 
-    const apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${process.env.API_KEY}`;
+    const apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.API_KEY}&units=metric`;
 
     const response = await axios.get(apiURL);
 
     res.json(response.data);
+
   } catch (err) {
     console.error("Backend error:", err.message);
-    return res.status(500).json({ error: "City not found or server error" });
+    res.status(500).json({ error: "City not found or server error" });
   }
 });
 
