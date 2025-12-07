@@ -23,11 +23,11 @@ app.get("/weather", async (req, res) => {
       return res.status(400).json({ error: "City is required" });
     }
 
-    const apiURL = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${process.env.OPENWEATHER_API_KEY}&units=metric`;
+    const apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${process.env.API_KEY}`;
 
-const response = await axios.get(apiURL);
-res.json(response.data);
+    const response = await axios.get(apiURL);
 
+    res.json(response.data);
   } catch (err) {
     console.error("Backend error:", err.message);
     return res.status(500).json({ error: "City not found or server error" });
@@ -36,4 +36,3 @@ res.json(response.data);
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
