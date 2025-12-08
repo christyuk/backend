@@ -6,34 +6,43 @@ import axios from "axios";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// Allow Vercel & localhost to access backend
+app.use(
+  cors({
+    origin: [
+      "https://weather-app-seven-eta-89.vercel.app",
+      "http://localhost:3000"
+    ],
+  })
+);
+
+// Allow JSON body
 app.use(express.json());
 
-// HEALTH CHECK
-app.get("/healthz", (req, res) => {
+// Correct health check for Render
+app.get("/health", (req, res) => {
   res.send("OK");
 });
 
-// WEATHER ROUTE
+// Weather route
 app.get("/weather", async (req, res) => {
   try {
     const city = req.query.city;
+    if (!city) return res.status(400).json({ error: "City is required" });
 
-    if (!city) {
-      return res.status(400).json({ error: "City is required" });
-    }
+    const apiKey = process.env.OPENWEATHER_API_KEY;
 
-    const apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.API_KEY}&units=metric`;
-
-    const response = await axios.get(apiURL);
+    const response = await axios.get(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
+    );
 
     res.json(response.data);
-
   } catch (err) {
-    console.error("Backend error:", err.message);
-    res.status(500).json({ error: "City not found or server error" });
+    res.status(500).json({ error: err.message });
   }
 });
 
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Start server
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log("Server running on port", port));
