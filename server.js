@@ -4,18 +4,18 @@ import dotenv from "dotenv";
 import axios from "axios";
 
 dotenv.config();
+
 const app = express();
 
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+app.use(cors());
+app.use(express.json());
 
+// Correct health route
 app.get("/health", (req, res) => {
   res.send("OK");
 });
 
+// Weather API
 app.get("/weather", async (req, res) => {
   try {
     const city = req.query.city;
@@ -31,5 +31,6 @@ app.get("/weather", async (req, res) => {
   }
 });
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log("Backend running"));
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log("Server running on port " + PORT));
